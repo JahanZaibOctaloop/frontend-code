@@ -30,7 +30,6 @@ const SignUp1 = () => {
     e.preventDefault();
 
     try {
-      // Send signup request to the backend
       const response = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/signup`, {
         method: 'POST',
         headers: {
@@ -47,7 +46,6 @@ const SignUp1 = () => {
           showConfirmButton: false,
           timer: 2000,
         });
-        // Reset form fields
         setFormData({
           username: '',
           email: '',
@@ -55,7 +53,6 @@ const SignUp1 = () => {
           confirmPassword: '',
         });
       } else {
-        // Display error alert with the error message from the backend
         const errorText = await response.text();
         Swal.fire({
           icon: 'error',
