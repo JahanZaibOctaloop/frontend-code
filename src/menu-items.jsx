@@ -30,6 +30,19 @@ const menuItems = {
         }
       ]
     },
+    {
+      id: 'navigation',
+      title: 'Signup',
+      type: 'group',
+      icon: 'icon-navigation',
+      children: [
+        {
+          id: 'Signup',
+          title: 'Signup',
+          url: '/signup'
+        }
+      ]
+    },
     // {
     //   id: 'ui-element',
     //   title: '',

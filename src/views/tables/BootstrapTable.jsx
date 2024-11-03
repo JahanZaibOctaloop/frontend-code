@@ -23,6 +23,8 @@ const BootstrapTable = () => {
     dateOfBirth: '',
     dateOfJoining: '',
     reference: '',
+    salarySlip: null,
+    picture: null,
   });
 
   // Fetch all records from the backend
@@ -42,7 +44,6 @@ const BootstrapTable = () => {
         setLoading(false);
       }
     };
-
     fetchRecords();
   }, []);
 
@@ -62,9 +63,11 @@ const BootstrapTable = () => {
       bloodGroup: record.bloodGroup,
       weaponTrainingRecord: record.weaponTrainingRecord,
       experience: record.experience,
-      dateOfBirth: new Date(record.dateOfBirth).toISOString().split('T')[0], // Format to YYYY-MM-DD
+      dateOfBirth: new Date(record.dateOfBirth).toISOString().split('T')[0],
       dateOfJoining: new Date(record.dateOfJoining).toISOString().split('T')[0],
       reference: record.reference,
+      salarySlip: record.salarySlip,
+      picture: record.picture,
     });
     setShowModal(true);
   };
@@ -78,32 +81,92 @@ const BootstrapTable = () => {
     }));
   };
 
-  // Handle Submit Edit Form
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/edit-record/${currentRecord._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+  // Handle File Input Change
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: files[0],
+    }));
+  };
 
-      if (response.ok) {
-        const updatedRecord = await response.json();
-        setRecords((prevRecords) =>
-          prevRecords.map((rec) => (rec._id === currentRecord._id ? updatedRecord.record : rec))
-        );
-        Swal.fire('Updated!', 'Record has been updated.', 'success');
-        setShowModal(false);
+// Handle Submit Edit Form
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Check formData contents before sending
+  console.log('Form Data:', formData);
+  
+  // Prepare FormData object
+  const formDataToSend = new FormData();
+  for (const key in formData) {
+    if (formData[key] !== null && formData[key] !== undefined) { 
+      if (formData[key] instanceof File) {
+        formDataToSend.append(key, formData[key]);
       } else {
-        Swal.fire('Error!', 'Failed to update record.', 'error');
+        formDataToSend.append(key, formData[key].toString());
       }
-    } catch (error) {
-      Swal.fire('Error!', 'Failed to update record. Try again later.', 'error');
-      console.error('Error updating record:', error);
     }
+  }
+
+  // Display FormData contents for debugging
+  for (let [key, value] of formDataToSend.entries()) {
+    console.log(key, value );
+  }
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/edit-record/${currentRecord._id}`, {
+      method: 'PUT',
+      body: formDataToSend, // Send FormData
+    });
+
+    if (response.ok) {
+      const { record: updatedRecord } = await response.json();
+
+      setRecords((prevRecords) =>
+        prevRecords.map((rec) => (rec._id === currentRecord._id ? updatedRecord : rec))
+      );
+
+      // Show success alert and close modal
+      Swal.fire('Updated!', 'Record has been updated.', 'success');
+      setShowModal(false);
+    } else {
+      Swal.fire('Error!', 'Failed to update record.', 'error');
+    }
+  } catch (error) {
+    Swal.fire('Error!', 'Failed to update record. Try again later.', 'error');
+    console.error('Error updating record:', error);
+  }
+};
+
+
+
+  // Handle Delete
+  const handleDelete = async (id) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/delete-record/${id}`, {
+            method: 'DELETE',
+          });
+          if (response.ok) {
+            setRecords((prevRecords) => prevRecords.filter((rec) => rec._id !== id));
+            Swal.fire('Deleted!', 'Record has been deleted.', 'success');
+          } else {
+            Swal.fire('Error!', 'Failed to delete record.', 'error');
+          }
+        } catch (error) {
+          Swal.fire('Error!', 'Failed to delete record. Try again later.', 'error');
+          console.error('Error deleting record:', error);
+        }
+      }
+    });
   };
 
   return (
@@ -137,13 +200,7 @@ const BootstrapTable = () => {
                         <th scope="row">{index + 1}</th>
                         <td>
                           {record.picture ? (
-                            <Image
-                              src={`${import.meta.env.VITE_APP_BASE_URL}/uploads/${record.picture}`}
-                              alt="Guard"
-                              thumbnail
-                              width={50}
-                              height={50}
-                            />
+                            <Image src={record.picture} alt="Guard" thumbnail width={50} height={50} />
                           ) : (
                             'N/A'
                           )}
@@ -177,7 +234,7 @@ const BootstrapTable = () => {
           <Modal.Title>Edit Record</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit} encType="multipart/form-data">
             <Form.Group controlId="formName">
               <Form.Label>Name</Form.Label>
               <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} required />
@@ -242,6 +299,14 @@ const BootstrapTable = () => {
             <Form.Group controlId="formReference">
               <Form.Label>Reference</Form.Label>
               <Form.Control type="text" name="reference" value={formData.reference} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group controlId="formSalarySlip">
+              <Form.Label>Salary Slip</Form.Label>
+              <Form.Control type="file" name="salarySlip" onChange={handleFileChange} />
+            </Form.Group>
+            <Form.Group controlId="formPicture">
+              <Form.Label>Picture</Form.Label>
+              <Form.Control type="file" name="picture" onChange={handleFileChange} />
             </Form.Group>
             <Button variant="primary" type="submit">
               Save Changes
