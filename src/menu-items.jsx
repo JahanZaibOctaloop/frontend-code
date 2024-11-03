@@ -37,8 +37,10 @@ const menuItems = {
       icon: 'icon-navigation',
       children: [
         {
-          id: 'Signup',
-          title: 'Signup',
+          id: 'Add Record',
+          title: 'Add Record',
+          type: 'item',
+          icon: 'feather icon-home',
           url: '/signup'
         }
       ]
