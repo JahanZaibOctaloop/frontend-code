@@ -32,7 +32,7 @@ export const renderRoutes = (routes = []) => (
 const routes = [
   {
     exact: 'true',
-    path: '/login',
+    path: '/',
     element: lazy(() => import('./views/auth/signin/SignIn1'))
   },
   {
@@ -56,7 +56,7 @@ const routes = [
     routes: [
       {
         exact: 'true',
-        path: '/',
+        path: '/dashboard',
         element: lazy(() => import('./views/dashboard/index'))
       },
       {

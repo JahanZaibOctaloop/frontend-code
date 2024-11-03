@@ -41,28 +41,16 @@ const FormsElements = () => {
     }));
   };
 
-  // Validate required fields
+  // Quick form validation
   const validateForm = () => {
     const requiredFields = [
-      'name',
-      'fatherName',
-      'role',
-      'temporaryAddress',
-      'permanentAddress',
-      'mobileNumber',
-      'nextOfKin',
-      'emergencyContactNumber',
-      'bloodGroup',
-      'dateOfBirth',
-      'dateOfJoining',
-      'salarySlip',
-      'picture',
+      'name', 'fatherName', 'role', 'temporaryAddress', 'permanentAddress',
+      'mobileNumber', 'nextOfKin', 'emergencyContactNumber', 'bloodGroup',
+      'dateOfBirth', 'dateOfJoining', 'salarySlip', 'picture'
     ];
 
     for (let field of requiredFields) {
-      if (!formData[field]) {
-        return false;
-      }
+      if (!formData[field]) return false;
     }
     return true;
   };
@@ -94,13 +82,13 @@ const FormsElements = () => {
       if (response.ok) {
         Swal.fire({
           icon: 'success',
-          title: 'Record Submitted Successfully!',
-          text: 'Thanks for submitting the record.',
+          title: 'Record Submitted!',
+          text: 'Thank you for submitting your record.',
           showConfirmButton: false,
-          timer: 2000,
+          timer: 1500, // Display for only 1.5 seconds
         });
-        
-        // Clear form after successful submission
+
+        // Clear form after submission
         setFormData({
           name: '',
           fatherName: '',
@@ -157,12 +145,10 @@ const FormsElements = () => {
                       <Form.Label>Name</Form.Label>
                       <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} required />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="fatherName">
                       <Form.Label>Father's Name</Form.Label>
                       <Form.Control type="text" name="fatherName" value={formData.fatherName} onChange={handleChange} required />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="role">
                       <Form.Label>Role</Form.Label>
                       <Form.Control as="select" name="role" value={formData.role} onChange={handleChange} required>
@@ -173,17 +159,14 @@ const FormsElements = () => {
                         <option value="CAF">CAF</option>
                       </Form.Control>
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="temporaryAddress">
                       <Form.Label>Temporary Address</Form.Label>
                       <Form.Control type="text" name="temporaryAddress" value={formData.temporaryAddress} onChange={handleChange} required />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="permanentAddress">
                       <Form.Label>Permanent Address</Form.Label>
                       <Form.Control type="text" name="permanentAddress" value={formData.permanentAddress} onChange={handleChange} required />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="policeVerification">
                       <Form.Check
                         type="checkbox"
@@ -193,24 +176,21 @@ const FormsElements = () => {
                         onChange={handleChange}
                       />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="mobileNumber">
                       <Form.Label>Mobile Number</Form.Label>
                       <Form.Control type="text" name="mobileNumber" value={formData.mobileNumber} onChange={handleChange} required />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="nextOfKin">
                       <Form.Label>Next of Kin</Form.Label>
                       <Form.Control type="text" name="nextOfKin" value={formData.nextOfKin} onChange={handleChange} required />
                     </Form.Group>
+                  </Col>
 
+                  <Col md={6}>
                     <Form.Group className="mb-3" controlId="emergencyContactNumber">
                       <Form.Label>Emergency Contact Number</Form.Label>
                       <Form.Control type="text" name="emergencyContactNumber" value={formData.emergencyContactNumber} onChange={handleChange} required />
                     </Form.Group>
-                  </Col>
-
-                  <Col md={6}>
                     <Form.Group className="mb-3" controlId="bloodGroup">
                       <Form.Label>Blood Group</Form.Label>
                       <Form.Control as="select" name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} required>
@@ -225,37 +205,30 @@ const FormsElements = () => {
                         <option value="O-">O-</option>
                       </Form.Control>
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="weaponTrainingRecord">
                       <Form.Label>Weapon Training Record</Form.Label>
                       <Form.Control type="text" name="weaponTrainingRecord" value={formData.weaponTrainingRecord} onChange={handleChange} />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="experience">
                       <Form.Label>Experience</Form.Label>
                       <Form.Control type="text" name="experience" value={formData.experience} onChange={handleChange} />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="dateOfBirth">
                       <Form.Label>Date of Birth</Form.Label>
                       <Form.Control type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="dateOfJoining">
                       <Form.Label>Date of Joining</Form.Label>
                       <Form.Control type="date" name="dateOfJoining" value={formData.dateOfJoining} onChange={handleChange} required />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="reference">
                       <Form.Label>Reference</Form.Label>
                       <Form.Control type="text" name="reference" value={formData.reference} onChange={handleChange} />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="salarySlip">
                       <Form.Label>Salary Slip</Form.Label>
                       <Form.Control type="file" name="salarySlip" onChange={handleFileChange} required />
                     </Form.Group>
-
                     <Form.Group className="mb-3" controlId="picture">
                       <Form.Label>Picture</Form.Label>
                       <Form.Control type="file" name="picture" onChange={handleFileChange} required />
