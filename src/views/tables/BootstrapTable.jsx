@@ -109,7 +109,6 @@ const handleSubmit = async (e) => {
     }
   }
 
-  // Display FormData contents for debugging
   for (let [key, value] of formDataToSend.entries()) {
     console.log(key, value );
   }

@@ -29,7 +29,6 @@ export const renderRoutes = (routes = []) => (
     </Routes>
   </Suspense>
 );
-
 const routes = [
   {
     exact: 'true',
