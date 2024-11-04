@@ -19,11 +19,10 @@ const FormsElements = () => {
     dateOfBirth: '',
     dateOfJoining: '',
     reference: '',
-    salarySlip: null,
+    salarySlip: '',
     picture: null,
   });
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -32,7 +31,6 @@ const FormsElements = () => {
     }));
   };
 
-  // Handle file uploads
   const handleFileChange = (e) => {
     const { name } = e.target;
     setFormData((prevData) => ({
@@ -105,7 +103,7 @@ const FormsElements = () => {
           dateOfBirth: '',
           dateOfJoining: '',
           reference: '',
-          salarySlip: null,
+          salarySlip: '',
           picture: null,
         });
 
@@ -226,8 +224,8 @@ const FormsElements = () => {
                       <Form.Control type="text" name="reference" value={formData.reference} onChange={handleChange} />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="salarySlip">
-                      <Form.Label>Salary Slip</Form.Label>
-                      <Form.Control type="file" name="salarySlip" onChange={handleFileChange} required />
+                      <Form.Label>Salary</Form.Label>
+                      <Form.Control type="text" name="salarySlip" onChange={handleChange} required />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="picture">
                       <Form.Label>Picture</Form.Label>

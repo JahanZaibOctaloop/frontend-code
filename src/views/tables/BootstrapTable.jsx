@@ -72,7 +72,6 @@ const BootstrapTable = () => {
     setShowModal(true);
   };
 
-  // Handle Input Change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -187,6 +186,7 @@ const handleSubmit = async (e) => {
                       <th>Picture</th>
                       <th>Name</th>
                       <th>Role</th>
+                      <th>Salary</th>
                       <th>Mobile Number</th>
                       <th>Date of Birth</th>
                       <th>Date of Joining</th>
@@ -206,6 +206,7 @@ const handleSubmit = async (e) => {
                         </td>
                         <td>{record.name}</td>
                         <td>{record.role}</td>
+                        <td>{record.salarySlip}</td>
                         <td>{record.mobileNumber}</td>
                         <td>{new Date(record.dateOfBirth).toLocaleDateString()}</td>
                         <td>{new Date(record.dateOfJoining).toLocaleDateString()}</td>
@@ -301,7 +302,7 @@ const handleSubmit = async (e) => {
             </Form.Group>
             <Form.Group controlId="formSalarySlip">
               <Form.Label>Salary Slip</Form.Label>
-              <Form.Control type="file" name="salarySlip" onChange={handleFileChange} />
+              <Form.Control type="text" value={formData.salarySlip} name="salarySlip" onChange={handleChange} />
             </Form.Group>
             <Form.Group controlId="formPicture">
               <Form.Label>Picture</Form.Label>

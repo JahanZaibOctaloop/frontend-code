@@ -11,6 +11,7 @@ const DashDefault = () => {
     todayRecords: 0,
     totalUsers: 0,
   });
+  const [todayAttendance, setTodayAttendance] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -27,18 +28,27 @@ const DashDefault = () => {
       return;
     }
 
-    const fetchDashboardStats = async () => {
+    // Fetch dashboard stats and today's attendance data
+    const fetchDashboardData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_APP_BASE_URL}/api/dashboard-stats`);
-        setDashboardStats(response.data);
+        const dashboardResponse = await axios.get(`${import.meta.env.VITE_APP_BASE_URL}/api/dashboard-stats`);
+        setDashboardStats(dashboardResponse.data);
+
+        const attendanceResponse = await axios.get('https://a6ca-34-142-160-201.ngrok-free.app/attendance/today', {
+          headers: {
+            'Accept': 'application/json',
+          }
+        });
+        
+        setTodayAttendance(attendanceResponse.data?.count ?? 'N/A');
       } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDashboardStats();
+    fetchDashboardData();
   }, [navigate]);
 
   if (loading) {
@@ -49,7 +59,7 @@ const DashDefault = () => {
     { title: 'Total Records', amount: dashboardStats.totalRecords, icon: 'icon-database text-c-green' },
     { title: 'Today\'s Records', amount: dashboardStats.todayRecords, icon: 'icon-calendar text-c-blue' },
     { title: 'Total Users', amount: dashboardStats.totalUsers, icon: 'icon-users text-c-orange' },
-    { title: 'Today Attendance', icon: 'icon-users text-c-orange' },
+    { title: 'Today Attendance', amount: todayAttendance, icon: 'icon-users text-c-orange' },
   ];
 
   return (
