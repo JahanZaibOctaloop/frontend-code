@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Card } from 'react-bootstrap';
 import axios from 'axios';
-import verifyAdmin from 'middleware/verifyAdmin'; // Adjust path as needed
+import verifyAdmin from 'middleware/verifyAdmin';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
@@ -11,44 +11,62 @@ const DashDefault = () => {
     todayRecords: 0,
     totalUsers: 0,
   });
-  const [todayAttendance, setTodayAttendance] = useState(null);
+  const [todayAttendance, setTodayAttendance] = useState('N/A');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Fetch today's attendance count
+  const fetchTodayAttendance = async () => {
+    // ${import.meta.env.VITE_APP_BASE_URL}
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_APP_BASE_URL}/api/attendance/today-present`,
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+        }
+      );
+      setTodayAttendance(response.data.presentCount ?? 'N/A');
+    } catch (error) {
+      console.error('Error fetching today\'s attendance:', error);
+      setTodayAttendance('N/A');
+    }
+  };
+
+  // Fetch dashboard statistics
+  const fetchDashboardData = async () => {
+    try {
+      const dashboardResponse = await axios.get(
+        `${import.meta.env.VITE_APP_BASE_URL}/api/dashboard-stats`
+      );
+      setDashboardStats(dashboardResponse.data);
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    }
+  };
+
   useEffect(() => {
-    // Check if the user is an admin
+    // Verify if the user is an admin
     if (!verifyAdmin()) {
       Swal.fire({
         icon: 'error',
         title: 'Access Denied',
         text: 'You do not have permission to access this page. Only admins are allowed.',
       }).then(() => {
-        navigate('/'); 
+        navigate('/');
       });
       return;
     }
 
-    // Fetch dashboard stats and today's attendance data
-    const fetchDashboardData = async () => {
-      try {
-        const dashboardResponse = await axios.get(`${import.meta.env.VITE_APP_BASE_URL}/api/dashboard-stats`);
-        setDashboardStats(dashboardResponse.data);
-
-        const attendanceResponse = await axios.get('https://a6ca-34-142-160-201.ngrok-free.app/attendance/today', {
-          headers: {
-            'Accept': 'application/json',
-          }
-        });
-        
-        setTodayAttendance(attendanceResponse.data?.count ?? 'N/A');
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchDashboardData();
+      await fetchTodayAttendance();
+      setLoading(false);
     };
 
-    fetchDashboardData();
+    fetchData();
   }, [navigate]);
 
   if (loading) {

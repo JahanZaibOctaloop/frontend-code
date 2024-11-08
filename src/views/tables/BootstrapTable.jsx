@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 
 const BootstrapTable = () => {
   const [records, setRecords] = useState([]);
+  const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [currentRecord, setCurrentRecord] = useState(null);
@@ -27,7 +28,6 @@ const BootstrapTable = () => {
     picture: null,
   });
 
-  // Fetch all records from the backend
   useEffect(() => {
     const fetchRecords = async () => {
       try {
@@ -44,8 +44,32 @@ const BootstrapTable = () => {
         setLoading(false);
       }
     };
+
+
+    const fetchAttendance = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/attendance`);
+        if (response.ok) {
+          const data = await response.json();
+          setAttendance(data);
+        } else {
+          console.error('Failed to fetch attendance');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchRecords();
+    fetchAttendance();
   }, []);
+
+  const checkAttendanceStatus = (recordId) => {
+    return attendance.some((entry) => entry.record_id === recordId) ? 'Present' : 'Absent';
+  };
+
 
   // Handle Edit Modal Open
   const handleEdit = (record) => {
@@ -189,8 +213,10 @@ const handleSubmit = async (e) => {
                       <th>Salary</th>
                       <th>Mobile Number</th>
                       <th>Date of Birth</th>
+                      <th>Pay Abel</th>
                       <th>Date of Joining</th>
                       <th>Action</th>
+                      <th>Attendance</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -209,6 +235,7 @@ const handleSubmit = async (e) => {
                         <td>{record.salarySlip}</td>
                         <td>{record.mobileNumber}</td>
                         <td>{new Date(record.dateOfBirth).toLocaleDateString()}</td>
+                        <td>20000</td>
                         <td>{new Date(record.dateOfJoining).toLocaleDateString()}</td>
                         <td>
                           <Button variant="primary" size="sm" onClick={() => handleEdit(record)}>
@@ -218,6 +245,14 @@ const handleSubmit = async (e) => {
                             Delete
                           </Button>
                         </td>
+                        <td>
+                        <Button
+                            variant={checkAttendanceStatus(record._id) === 'Present' ? 'success' : 'danger'}
+                            size="sm"
+                          >
+                            {checkAttendanceStatus(record._id)}
+                          </Button>
+                          </td>
                       </tr>
                     ))}
                   </tbody>
